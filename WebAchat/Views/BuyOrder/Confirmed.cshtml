@@ -1,0 +1,40 @@
+﻿@model WebAchat.Models.BuyOrder
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<h2>Purchase Order Confirmed</h2>
+
+<div class="alert alert-success">
+    Order #@Model.OrderId has been successfully created!
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Supplier:</dt>
+    <dd class="col-sm-9">@Model.Supplier?.Name</dd>
+
+    <dt class="col-sm-3">Total Amount:</dt>
+    <dd class="col-sm-9">@Model.TotalAmount.ToString("C")</dd>
+
+    <dt class="col-sm-3">Execution Date:</dt>
+    <dd class="col-sm-9">@Model.ExecutionDate.ToString("d")</dd>
+</dl>
+
+<h4>Ordered Products:</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderProducts)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+            </tr>
+        }
+    </tbody>
+</table>

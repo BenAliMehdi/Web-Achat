@@ -1,0 +1,71 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebAchat.Models.ViewModels.OrderViewModel
+@if (ViewBag.msg == "no order exists")
+{
+    <p class="alert alert-danger">@ViewBag.msg</p>
+}
+else
+{
+
+    <p class="text-black">
+        order id: @Model.Id
+        date of order: @Model.Date
+    </p>
+    <a asp-action="Products" class="btn btn-primary">Add Product</a>
+    <a asp-action="deleteOrder" class="btn btn-danger">Delete Order</a>
+    <a asp-action="ConfirmOrder" class="btn btn-success">confirm Orders</a>
+    if (ViewBag.msg == "no product exists")
+    {
+        <p class="alert alert-danger">@ViewBag.msg</p>
+    }
+    else if (Model != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        ProductId
+                    </th>
+                    <th>
+                        ProductName
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Unit Price
+                    </th>
+                    <th>
+                        TotalPricePerProduct
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductPrice)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Total)
+                        </td>
+                        <td>
+                            @Html.ActionLink("update quantity", "AddProduct", new { productId = item.ProductId })|
+                            @Html.ActionLink("Delete", "RemoveProduct", new { productId = item.ProductId })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

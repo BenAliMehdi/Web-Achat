@@ -1,0 +1,126 @@
+﻿@model WebAchat.Models.ViewModels.OrderViewModel
+@{
+    ViewData["Title"] = "Current Purchase Order";
+}
+
+<div class="container">
+    @if (Model == null || !Model.OrderProducts.Any())
+    {
+        <div class="alert alert-info">
+            No active purchase order.
+            <form asp-action="StartNewOrder" method="post" class="d-inline">
+                <button type="submit" class="btn btn-primary btn-sm">Start New Order</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Order Summary</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var op in Model.OrderProducts)
+                        {
+                            <tr>
+                                <td>@op.ProductName</td>
+                                <td>@op.Price.ToString("C")</td>
+                                <td>@op.Quantity</td>
+                                <td>@op.Total.ToString("C")</td>
+                                <td>
+                                    <form asp-action="RemoveProduct" method="post">
+                                        <input type="hidden" name="tempOrderProductId" value="@op.TempOrderProductId" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h4 class="text-end">Total: @Model.TotalAmount.ToString("C")</h4>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Products</h5>
+
+                        <div class="mb-3">
+                            <h6>Existing Products</h6>
+                            <form asp-action="AddExistingProduct" method="post">
+                                <div class="input-group">
+                                    <select name="productId" class="form-select"
+                                            asp-items="@(new SelectList(ViewBag.Products, "ProductId", "Name"))">
+                                    </select>
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <hr>
+
+                        <h6>New Product</h6>
+                        <form asp-action="AddNewProduct" method="post">
+                            <div class="mb-3">
+                                <input name="Name" class="form-control" placeholder="Product Name" required />
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="Description" class="form-control" placeholder="Description"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <input type="number" name="Price" step="0.01" class="form-control" placeholder="Price" required />
+                            </div>
+                            <div class="mb-3">
+                                <select name="CategoryId" class="form-select"
+                                        asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "Name"))">
+                                    <option value="">Select Category</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <select name="ManufacturerId" class="form-select"
+                                        asp-items="@(new SelectList(ViewBag.Manufacturers, "ManufacturerId", "Name"))">
+                                    <option value="">Select Manufacturer</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                                <button type="submit" class="btn btn-success">Add Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Actions</h5>
+                        <form asp-action="ValidateOrder" method="post">
+                            <div class="mb-3">
+                                <select name="supplierId" class="form-select"
+                                        asp-items="@(new SelectList(ViewBag.Suppliers, "SupplierId", "Name"))">
+                                    <option value="">Select Supplier</option>
+                                </select>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success">Validate Order</button>
+                                <button type="submit" formaction="@Url.Action("CancelOrder")"
+                                        class="btn btn-danger">
+                                    Cancel Order
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
